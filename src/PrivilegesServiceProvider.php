@@ -24,7 +24,11 @@ class PrivilegesServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->publishes([__DIR__ .'/../config/privileges.php' => config_path('privileges.php')]);
+        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+
+        $this->publishes([__DIR__ .'/../config/privileges.php' => config_path('privileges.php')], 'config');
+
+        $this->publishes([__DIR__.'/../database/migrations/' => database_path('migrations')], 'migrations');
     }
 
     /**

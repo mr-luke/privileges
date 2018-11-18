@@ -10,13 +10,17 @@ use Illuminate\Support\Str;
 use Mrluke\Privileges\Contracts\HasPrivileges;
 
 /**
- * PrivilegesDetector is a class that provides full complex
+ * Detector is a class that provides full complex
  * method to determine Users privilege by its Role & external
  * conditions like: IP, Hours, Region etc.
  *
- * @author  https://github.com/mr-luke
- * @version 1.0.0
- * @license MIT
+ * @author    Łukasz Sitnicki (mr-luke)
+ * @link      http://github.com/mr-luke/privileges
+ *
+ * @category  Laravel
+ * @package   mr-luke/searcher
+ * @license   MIT
+ * @version   1.0.0
  */
 class Detector
 {
