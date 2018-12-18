@@ -4,9 +4,8 @@ namespace Mrluke\Privileges\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
-class Detector extends Facade
+class Manager extends Facade
 {
-
     /**
      * Get the registered name of the component.
      *
@@ -14,6 +13,6 @@ class Detector extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        return 'mrluke-privileges-detector';
+        return 'mrluke-privileges-manager';
     }
 }

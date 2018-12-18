@@ -24,7 +24,11 @@ class PrivilegesServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->publishes([__DIR__ .'/../config/privileges.php' => config_path('privileges.php')]);
+        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+
+        $this->publishes([__DIR__ .'/../config/privileges.php' => config_path('privileges.php')], 'config');
+
+        $this->publishes([__DIR__.'/../database/migrations/' => database_path('migrations')], 'migrations');
     }
 
     /**
@@ -36,8 +40,24 @@ class PrivilegesServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__ .'/../config/privileges.php', 'privileges');
 
-        $this->app->singleton('mrluke-privileges', function ($app) {
-            return new \Mrluke\Privileges\Detector($app['config']->get('privileges'));
+        $this->app->singleton('mrluke-privileges-detector', function ($app) {
+
+            $schema = \Mrluke\Configuration\Schema::createFromFile(
+                __DIR__.'/../configuration/schema.json',
+                true
+            );
+
+            $config = new \Mrluke\Configuration\Host(
+                $app['config']->get('privileges'),
+                $schema
+            );
+
+            return new \Mrluke\Privileges\Detector($config);
+        });
+
+        $this->app->singleton('mrluke-privileges-manager', function ($app) {
+
+            return new \Mrluke\Privileges\Manager;
         });
     }
 }

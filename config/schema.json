@@ -1,0 +1,5 @@
+{
+    "authorizable": "required|string",
+    "scopes": "required|array",
+    "mapping": "required|array"
+}
