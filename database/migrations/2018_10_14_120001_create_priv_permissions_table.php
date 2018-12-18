@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreatePrivScopesTable extends Migration
+class CreatePrivPermissionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,11 @@ class CreatePrivScopesTable extends Migration
      */
     public function up()
     {
-        Schema::create('priv_scopes', function (Blueprint $table) {
+        Schema::create('priv_permissions', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name')->unique();
-            $table->text('desc')->nullable();
-            $table->timestamps();
+            $table->morphs('grantable');
+            $table->string('scope');
+            $table->unsignedTinyInteger('level')->default(0);
         });
     }
 
@@ -28,6 +28,6 @@ class CreatePrivScopesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('priv_scopes');
+        Schema::dropIfExists('priv_permissions');
     }
 }

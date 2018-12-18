@@ -18,7 +18,7 @@ use Mrluke\Privileges\Contracts\HasPrivileges;
  * @link      http://github.com/mr-luke/privileges
  *
  * @category  Laravel
- * @package   mr-luke/searcher
+ * @package   mr-luke/privileges
  * @license   MIT
  * @version   1.0.0
  */

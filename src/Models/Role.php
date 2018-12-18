@@ -4,7 +4,19 @@ namespace Mrluke\Privileges\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Post extends Model
+use Mrluke\Privileges\Facades\Manager;
+
+/**
+ * Role model for package.
+ *
+ * @author    Łukasz Sitnicki (mr-luke)
+ * @link      http://github.com/mr-luke/privileges
+ *
+ * @category  Laravel
+ * @package   mr-luke/privileges
+ * @license   MIT
+ */
+class Role extends Model
 {
     /**
      * The attributes that should be cast to native types.
@@ -45,6 +57,17 @@ class Post extends Model
     protected $table = 'priv_roles';
 
     /**
+     * Return assigned Authorizable models.
+     *
+     */
+    public function assigned()
+    {
+        $model = Manager::getAuthorizableModel();
+
+        return $this->belongsToMany($model, 'priv_auth_role', 'role_id', 'auth_id');
+    }
+
+    /**
      * Return related model.
      */
     public function parent()
@@ -63,9 +86,8 @@ class Post extends Model
     /**
      * Return related model.
      */
-    public function scopes()
+    public function permissions()
     {
-        return $this->belongsToMany(Scope::class, 'priv_role_scope', 'scope_id', 'role_id')
-                    ->withPivot(['level']);
+        return $this->morphMany(Permission::class, 'grantable');
     }
 }

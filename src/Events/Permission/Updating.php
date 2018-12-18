@@ -1,13 +1,13 @@
 <?php
 
-namespace Mrluke\Privileges\Events\Scope;
+namespace Mrluke\Privileges\Events\Permission;
 
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-use Mrluke\Privileges\Models\Scope;
+use Mrluke\Privileges\Models\Permission;
 
-class Created
+class Updating
 {
     use Dispatchable, SerializesModels;
 
@@ -21,11 +21,11 @@ class Created
     /**
      * Instance of new model.
      *
-     * @var \Mrluke\Privileges\Models\Scope
+     * @var \Mrluke\Privileges\Models\Permission
      */
     public $model;
 
-    public function __construct(Scope $model)
+    public function __construct(Permission $model)
     {
         $this->auth = auth()->user();
         $this->model = $model;

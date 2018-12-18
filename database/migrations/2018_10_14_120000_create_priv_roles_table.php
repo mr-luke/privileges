@@ -16,7 +16,7 @@ class CreatePrivRolesTable extends Migration
         Schema::create('priv_roles', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name')->unique();
-            $table->unsignedTinyInteger('level')->default(0);
+            $table->unsignedTinyInteger('level')->default(0); // Visitor,Employee,Manager,Director
             $table->unsignedInteger('parent_id')->nullable();
             $table->text('childs')->nullable();
             $table->timestamps();
