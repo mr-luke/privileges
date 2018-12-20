@@ -4,6 +4,7 @@ namespace Mrluke\Privileges\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+use Mrluke\Privileges\Contracts\Role as Contract;
 use Mrluke\Privileges\Facades\Manager;
 
 /**
@@ -16,7 +17,7 @@ use Mrluke\Privileges\Facades\Manager;
  * @package   mr-luke/privileges
  * @license   MIT
  */
-class Role extends Model
+class Role extends Model implements Contract
 {
     /**
      * The attributes that should be cast to native types.
@@ -89,5 +90,28 @@ class Role extends Model
     public function permissions()
     {
         return $this->morphMany(Permission::class, 'grantable');
+    }
+
+    /**
+     * Grant or update premission for a Permitable.
+     *
+     * @param  string $scope
+     * @param  int    $level
+     * @return void
+     */
+    public function grantPermission(string $scope, int $level): void
+    {
+        Manager::grantPermission($this, $scope, $level);
+    }
+
+    /**
+     * Regain permission for a Permitable.
+     *
+     * @param  string $scope
+     * @return void
+     */
+    public function regainPermission(string $scope): void
+    {
+        Manager::regainPermission($this, $scope);
     }
 }

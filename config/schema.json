@@ -1,5 +1,6 @@
 {
     "authorizable": "required|string",
     "scopes": "required|array",
-    "mapping": "required|array"
+    "mapping": "required|array",
+    "mapping_default": "nullable|string"
 }

@@ -42,6 +42,11 @@ class PrivilegesServiceProvider extends ServiceProvider
 
         $this->app->singleton('mrluke-privileges-detector', function ($app) {
 
+            return new \Mrluke\Privileges\Detector;
+        });
+
+        $this->app->singleton('mrluke-privileges-manager', function ($app) {
+
             $schema = \Mrluke\Configuration\Schema::createFromFile(
                 __DIR__.'/../configuration/schema.json',
                 true
@@ -52,12 +57,7 @@ class PrivilegesServiceProvider extends ServiceProvider
                 $schema
             );
 
-            return new \Mrluke\Privileges\Detector($config);
-        });
-
-        $this->app->singleton('mrluke-privileges-manager', function ($app) {
-
-            return new \Mrluke\Privileges\Manager;
+            return new \Mrluke\Privileges\Manager($config);
         });
     }
 }

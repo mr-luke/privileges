@@ -4,6 +4,8 @@ namespace Mrluke\Privileges\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+use Mrluke\Privileges\Contracts\Permission as Contract;
+
 /**
  * Permission model for package.
  *
@@ -14,7 +16,7 @@ use Illuminate\Database\Eloquent\Model;
  * @package   mr-luke/privileges
  * @license   MIT
  */
-class Permission extends Model
+class Permission extends Model implements Contract
 {
     /**
      * The attributes that should be cast to native types.
@@ -59,5 +61,27 @@ class Permission extends Model
     public function grantable()
     {
         return $this->morphTo();
+    }
+
+    /**
+     * Scope a query to only include specific scope.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param  string                                $scope
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeOfScope($query, string $scope)
+    {
+        return $query->where('scope', $scope);
+    }
+
+    /**
+     * Return permission level.
+     *
+     * @return int
+     */
+    public function getLevel():int
+    {
+        return $this->level;
     }
 }

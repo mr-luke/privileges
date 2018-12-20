@@ -2,6 +2,7 @@
 
 namespace Mrluke\Privileges\Extentions;
 
+use Mrluke\Privileges\Facades\Manager;
 use Mrluke\Privileges\Models\Permission;
 use Mrluke\Privileges\Models\Role;
 
@@ -34,5 +35,61 @@ trait Authorizable
     public function roles()
     {
         return $this->belongsToMany(Role::class, 'priv_auth_role', 'auth_id', 'role_id');
+    }
+
+    /**
+     * Assign a role to given Authorizable.
+     *
+     * @param  mixed $role
+     * @return void
+     */
+    public function assignRole($role): void
+    {
+        Manager::assignRole($this, $role);
+    }
+
+    /**
+     * Return permission level based on personal's & role's permission.
+     *
+     * @param  string $scope
+     * @return int
+     */
+    public function considerPermission(string $scope): int
+    {
+        return Manager::considerPermission($this, $scope);
+    }
+
+    /**
+     * Grant or update premission for a Permitable.
+     *
+     * @param  string $scope
+     * @param  int    $level
+     * @return void
+     */
+    public function grantPermission(string $scope, int $level): void
+    {
+        Manager::grantPermission($this, $scope, $level);
+    }
+
+    /**
+     * Regain permission for a Permitable.
+     *
+     * @param  string $scope
+     * @return void
+     */
+    public function regainPermission(string $scope): void
+    {
+        Manager::regainPermission($this, $scope);
+    }
+
+    /**
+     * Remove a role from given Authorizable.
+     *
+     * @param  mixed $role
+     * @return void
+     */
+    public function removeRole($role): void
+    {
+        Manager::removeRole($this, $role);
     }
 }

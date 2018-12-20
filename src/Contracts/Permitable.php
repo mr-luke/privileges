@@ -3,7 +3,7 @@
 namespace Mrluke\Privileges\Contracts;
 
 /**
- * Authorizable interface for package.
+ * Permitable interface for package.
  *
  * @author    Łukasz Sitnicki (mr-luke)
  * @link      http://github.com/mr-luke/privileges
@@ -12,11 +12,11 @@ namespace Mrluke\Privileges\Contracts;
  * @package   mr-luke/privileges
  * @license   MIT
  */
-interface Authorizable extends Permitable
+interface Permitable
 {
     /**
-     * Return related Roles.
+     * Return related Permission.
      *
      */
-    public function roles();
+    public function permissions();
 }

@@ -41,4 +41,6 @@ return [
         \App\Users::class => 'users'
     ],
 
+    'mapping_default' => null,
+
 ];
