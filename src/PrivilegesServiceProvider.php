@@ -42,7 +42,9 @@ class PrivilegesServiceProvider extends ServiceProvider
 
         $this->app->singleton('mrluke-privileges-detector', function ($app) {
 
-            return new \Mrluke\Privileges\Detector;
+            $manager = $app->make('mrluke-privileges-manager');
+
+            return new \Mrluke\Privileges\Detector($manager);
         });
 
         $this->app->singleton('mrluke-privileges-manager', function ($app) {

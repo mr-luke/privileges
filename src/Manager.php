@@ -113,6 +113,34 @@ class Manager
     }
 
     /**
+     * Return restrictions based on roles.
+     *
+     * @param  \Mrluke\Privileges\Contracts\Authorizable $auth
+     * @param  string                                    $scope
+     * @return int
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function considerRestriction(Authorizable $auth, string $scope): array
+    {
+        $restrictions = [];
+        $level        = 0;
+
+        $auth->load('roles.permissions');
+
+        foreach ($auth->roles as $r) {
+            // Let's check if there's a given scope in Parmitable's
+            // ones and consider Role's level.
+            //
+            if ($this->hasPermission($r, $scope)) {
+                ($level < $r->level) ?: $restrictions = $r->restrictions;
+            }
+        }
+
+        return $restrictions;
+    }
+
+    /**
      * Detect which scope should be applied for given model.
      *
      * @param  string $model

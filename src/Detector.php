@@ -7,7 +7,8 @@ use InvalidArgumentException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
-use Mrluke\Privileges\Contracts\HasPrivileges;
+use Mrluke\Privileges\Contracts\Authorizable;
+use Mrluke\Privileges\Manager;
 
 /**
  * Detector is a class that provides full complex
@@ -25,43 +26,72 @@ use Mrluke\Privileges\Contracts\HasPrivileges;
 class Detector
 {
     /**
-     * HasPrivileges identifier name.
+     * Value return in case of allowed access.
+     *
+     * @var mixed
+     */
+    protected $allowed;
+
+    /**
+     * Value return in case of denid access.
+     *
+     * @var mixed
+     */
+    protected $denied;
+
+    /**
+     * Authorizable primary key name.
      *
      * @var string
      */
-    protected $identifier = 'id';
+    protected $identifier;
 
     /**
-     * Privilege's name.
+     * Instance of privileges Manager.
+     *
+     * @var \Mrluke\Privileges\Manager
+     */
+    protected $manager;
+
+    /**
+     * Scope name.
      *
      * @var string
      */
-    protected $privilege;
+    protected $scope;
 
     /**
-     * Instance of HasPrivileges.
+     * Instance of Authorizable.
      *
-     * @var HasPrivileges
+     * @var \Mrluke\Privileges\Contracts\Authorizable
      */
     protected $subject;
+
+    public function __construct(Manager $manager)
+    {
+        $this->manager    = $manager;
+
+        $this->allowed    = $manager->allowed_value;
+        $this->denied     = $manager->denied_value;
+        $this->identifier = $manager->authKeyName;
+    }
 
     /**
      * Determine if give Subject has resource.
      *
      * @param  Illuminate\Database\Eloquent\Model  $model
-     * @param  boolean $deny
      * @param  string  $relation
      * @return bool
      */
-    public function has(Model $model, bool $deny = false, string $relation = null) : bool
+    public function has(Model $model, string $relation = null): bool
     {
         $this->hasSubjectSet();
 
         // First we need to check restritions for given Role
         // to detect special Location, IP, Hours conditions.
-        if (! $this->checkRestrictions()) return $deny;
+        if (! $this->checkRestrictions()) return $this->denied;
 
-        return $this->hasModel($model, $relation) ? !$deny : $deny;
+        return $this->hasModel($model, $relation) ? $this->allowed: $this->denied;
     }
 
     /**
@@ -69,58 +99,57 @@ class Detector
      *
      * @param  Illuminate\Database\Eloquent\Model  $model
      * @param  int $min
-     * @param  boolean $deny
      * @param  string $relation
      * @return bool
      */
-    public function hasOrLevel(Model $model, int $min, bool $deny = false, string $relation = null) : bool
+    public function hasOrLevel(Model $model, int $min, string $relation = null): bool
     {
-        $this->hasSubjectAndPrivilegeSet();
+        $this->hasSubjectAndScopeSet();
 
         // First we need to check restritions for given Role
         // to detect special Location, IP, Hours conditions.
-        if (! $this->checkRestrictions()) return $deny;
+        if (! $this->checkRestrictions()) return $this->denied;
 
-        if ($this->hasModel($model, $relation)) return !$deny;
+        if ($this->hasModel($model, $relation)) return $this->allowed;
 
-        return $this->hasLevel($min) ? !$deny : $deny;
+        return $this->hasLevel($min) ? $this->allowed : $this->denied;
     }
 
     /**
      * Determines if Subject has access to resource.
      *
      * @param  int     $min
-     * @param  boolean $deny
+     * @param  boolean $this->denied
      * @return bool
      */
-    public function level(int $min, bool $deny = false) : bool
+    public function level(int $min): bool
     {
-        $this->hasSubjectAndPrivilegeSet();
+        $this->hasSubjectAndScopeSet();
 
         // First we need to check restritions for given Role
         // to detect special Location, IP, Hours conditions.
-        if (! $this->checkRestrictions()) return $deny;
+        if (! $this->checkRestrictions()) return $this->denied;
 
-        return $this->hasLevel($min) ? !$deny : $deny;
+        return $this->hasLevel($min) ? $this->allowed : $this->denied;
     }
 
     /**
      * Determines if Subject is owner of model.
      *
      * @param  Illuminate\Database\Eloquent\Model  $model
-     * @param  boolean $deny
+     * @param  boolean $this->denied
      * @param  string $foreign
      * @return bool
      */
-    public function owner(Model $model, bool $deny = false, string $foreign = null) : bool
+    public function owner(Model $model, string $foreign = null): bool
     {
         $this->hasSubjectSet();
 
         // First we need to check restritions for given Role
         // to detect special Location, IP, Hours conditions.
-        if (! $this->checkRestrictions()) return $deny;
+        if (! $this->checkRestrictions()) return $this->denied;
 
-        return $this->isOwner($model, $foreign) ? !$deny : $deny;
+        return $this->isOwner($model, $foreign) ? $this->allowed : $this->denied;
     }
 
     /**
@@ -128,32 +157,32 @@ class Detector
      *
      * @param  Illuminate\Database\Eloquent\Model  $model
      * @param  int $min
-     * @param  boolean $deny
+     * @param  boolean $this->denied
      * @param  string $foreign
      * @return bool
      */
-    public function ownerOrLevel(Model $model, int $min, bool $deny = false, string $foreign = null) : bool
+    public function ownerOrLevel(Model $model, int $min, string $foreign = null): bool
     {
-        $this->hasSubjectAndPrivilegeSet();
+        $this->hasSubjectAndScopeSet();
 
         // First we need to check restritions for given Role
         // to detect special Location, IP, Hours conditions.
-        if (! $this->checkRestrictions()) return $deny;
+        if (! $this->checkRestrictions()) return $this->denied;
 
-        if ($this->isOwner($model, $foreign)) return !$deny;
+        if ($this->isOwner($model, $foreign)) return $this->allowed;
 
-        return $this->hasLevel($min) ? !$deny : $deny;
+        return $this->hasLevel($min) ? $this->allowed : $this->denied;
     }
 
     /**
-     * Set model that is restricted.
+     * Set scope that is checking.
      *
-     * @param  mixed $privilege
+     * @param  string $scope
      * @return self
      */
-    public function privilege(string $privilege) : self
+    public function scope(string $scope): self
     {
-        $this->privilege = $privilege;
+        $this->scope = $scope;
 
         return $this;
     }
@@ -164,30 +193,30 @@ class Detector
      * @param  Illuminate\Database\Eloquent\Model  $model
      * @param  string $modelRelation
      * @param  string $relation
-     * @param  boolean $deny
+     * @param  boolean $this->denied
      * @return bool
      */
-    public function share(Model $model, string $modelRelation, string $relation, bool $deny = false) : bool
+    public function share(Model $model, string $modelRelation, string $relation): bool
     {
         $this->hasSubjectSet();
 
         // First we need to check restritions for given Role
         // to detect special Location, IP, Hours conditions.
-        if (! $this->checkRestrictions()) return $deny;
+        if (! $this->checkRestrictions()) return $this->denied;
 
-        return $this->isSharing($model, $modelRelation, $relation) ? !$deny : $deny;
+        return $this->isSharing($model, $modelRelation, $relation) ?
+            $this->allowed : $this->denied;
     }
 
     /**
      * Set user that needs to be checked.
      *
-     * @param  HasPrivileges $user
+     * @param  \Mrluke\Privileges\Contracts\Authorizable $user
      * @return self
      */
-    public function subject(HasPrivileges $user) : self
+    public function subject(Authorizable $auth): self
     {
-        $this->identifier = $user->getKeyName();
-        $this->subject = $user;
+        $this->subject = $auth;
 
         return $this;
     }
@@ -197,76 +226,27 @@ class Detector
      *
      * @return bool
      */
-    protected function checkRestrictions() : bool
+    protected function checkRestrictions(): bool
     {
-        // Let's get Role's restritions and check
+        $result = true;
+        // Let's get restritions and check
         // if its present.
-        $restrictions = $this->subject->role->restrictions;
-
-        if (is_null($restrictions)) return true;
-
-        // We need to check if subjects's IP address is allowed
-        // by it's Role to perform the action.
-        if (isset($restrictions['ip']))
-        {
-            $ip = ip2long(request()->ip());
-            $rule = $restrictions['ip']['rule'];
-
-            switch ($restrictions['ip']['type'])
+        if ($restrictions = $this->manager->considerRestriction($this->subject, $this->scope)) {
+            // We need to check if subjects's IP address is allowed
+            // by it's Role to perform the action.
+            if (isset($restrictions['ip']))
             {
-                case 'one':
-                    // Let's check if subject's IP is the same
-                    // as set one for Role.
-                    $fail = true;
+                $result = $this->concernIpRestriction($restrictions['ip'] ?? []);
+            }
 
-                    foreach ($rule as $ip)
-                    {
-                        if ($ip == ip2long($ip)) $fail = false;
-                    }
-                    if ($fail) return false;
-
-                    break;
-
-                case 'range':
-                    // Let's check if subject's IP is within
-                    // range set to Role.
-                    if ($ip < ip2long($rule[0]) || $ip > ip2long($rule[1])) return false;
-
-                    break;
-
-                default:
-                    // There's missconfigation here
-                    throw new Exception('Bad Role configuration.', 400);
+            // We need to check if access hour is correct.
+            if (isset($restrictions['hours']) && $result)
+            {
+                $result = $this->concernTimeRestriction($restrictions['time'] ?? []);
             }
         }
 
-        // We need to check if access hour is correct.
-        if (isset($restrictions['hours']))
-        {
-            $now = now();
-            $rule = $restrictions['ip']['rule'];
-
-            switch ($restrictions['hours']['type']) {
-                case 'day':
-                    if (!in_array($now->dayOfWeekIso, $rule)) return false;
-
-                case 'hour':
-                    if ($now->hour < $rule[0] || $now->hour > $rule[1]) return false;
-                    break;
-
-                default:
-                    // There's missconfigation here
-                    throw new Exception('Bad Role configuration.', 400);
-            }
-        }
-
-        // We need to check if subject is in allowed place.
-        if (isset($restrictions['location']))
-        {
-            // Location goes here
-        }
-
-        return true;
+        return $result;
     }
 
     /**
@@ -275,24 +255,11 @@ class Detector
      * @param  int  $min
      * @return bool
      */
-    protected function hasLevel(int $min) : bool
+    protected function hasLevel(int $min): bool
     {
-        // By default level is set to 0.
-        $level = 0;
+        $level = $this->manager->considerPermission($this->subject, $this->scope);
 
-        if (in_array($this->privilege, array_keys($this->subject->role->privileges))) {
-            // First we get subject level for its role.
-            $level = $this->subject->role->privileges[$this->privilege];
-        }
-
-        if (in_array($this->privilege, array_keys($this->subject->getPermissions()))) {
-            // Second we have to check if there's a personal
-            // granted permission for subject.
-            // PERSONAL overwrites role's one!
-            $level = $this->subject->getPermissions()[$this->privilege];
-        }
-
-        return $level >= $min ? true : false;
+        return $level >= $min;
     }
 
     /**
@@ -302,7 +269,7 @@ class Detector
      * @param  string|null  $relation
      * @return bool
      */
-    protected function hasModel(Model $model, $relation) : bool
+    protected function hasModel(Model $model, $relation): bool
     {
         if (is_null($relation)) {
             // We need to detect foreign key of relation
@@ -321,7 +288,7 @@ class Detector
      * @param  string|null $foreign
      * @return bool
      */
-    protected function isOwner(Model $model, $foreign) : bool
+    protected function isOwner(Model $model, $foreign): bool
     {
         if (is_null($foreign)) {
             // We need to detect foreign key of relation
@@ -342,7 +309,7 @@ class Detector
      * @param  string $relation
      * @return bool
      */
-    protected function isSharing(Model $model, $modelRelation, $relation) : bool
+    protected function isSharing(Model $model, $modelRelation, $relation): bool
     {
         $foreign = $model->$modelRelation()->getForeignKeyName();
 
@@ -355,10 +322,13 @@ class Detector
      * @return void
      * @throws InvalidArgumentException
      */
-    protected function hasSubjectSet()
+    protected function hasSubjectSet(): void
     {
-        if (empty($this->subject))
-            throw new InvalidArgumentException('Setting subject is required. Use method subject() befor detection.');
+        if (empty($this->subject)) {
+            throw new InvalidArgumentException(
+                'Setting subject is required. Use method subject() befor detection.'
+            );
+        }
     }
 
     /**
@@ -367,9 +337,65 @@ class Detector
      * @return void
      * @throws InvalidArgumentException
      */
-    protected function hasSubjectAndPrivilegeSet()
+    protected function hasSubjectAndScopeSet(): void
     {
-        if (empty($this->subject) || empty($this->privilege))
-            throw new InvalidArgumentException('Setting subject & privilege is required. Use method subject() & privilege() befor detection.');
+        $this->hasSubjectSet();
+
+        if (empty($this->scope)) {
+            throw new InvalidArgumentException(
+                'Setting scope is required. Use method scope() befor detection.'
+            );
+        }
+    }
+
+    /**
+     * Check if given IP restrictions allows Authorizable to perform action.
+     *
+     * @param  array $restrictions
+     * @return bool
+     */
+    private function concernIpRestriction(array $restrictions): bool
+    {
+        $ip     = ip2long(request()->ip());
+        $rule   = $restrictions['rule'];
+        $result = true;
+
+        switch ($restrictions['type']) {
+            case 'one':
+                // Let's check if subject's IP is the same
+                // as set one for Role.
+                foreach ($rule as $ip) {
+                    $result = ($ip == ip2long($ip)) ? true : false;
+                }
+                break;
+
+            case 'range':
+                // Let's check if subject's IP is within
+                // range set to Role.
+                ($ip >= ip2long($rule[0]) && $ip <= ip2long($rule[1])) ?: $result = false;
+                break;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Check if given Time restrictions allows Authorizable to perform action.
+     *
+     * @param  array $restrictions
+     * @return bool
+     */
+    private function concernTimeRestriction(array $restrictions): bool
+    {
+        $now = now();
+        $rule = $restrictions['rule'];
+
+        switch ($restrictions['type']) {
+            case 'day':
+                return (in_array($now->dayOfWeekIso, $rule)) ? true : false;
+
+            case 'hour':
+                return ($now->hour >= $rule[0] && $now->hour <= $rule[1]) ? true : false;
+        }
     }
 }

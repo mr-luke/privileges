@@ -43,4 +43,17 @@ return [
 
     'mapping_default' => null,
 
+    /*
+    |--------------------------------------------------------------------------
+    | Allowed/Denied values
+    |--------------------------------------------------------------------------
+    |
+    | This config allows you to override default allowed/denied values due to
+    | your project requirements.
+    |
+    */
+
+    'allowed_value' => true,
+    'denied_value'  => false,
+
 ];
