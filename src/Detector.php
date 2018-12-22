@@ -360,8 +360,7 @@ class Detector
         $rule   = $restrictions['rule'];
         $result = true;
 
-        switch ($restrictions['type'])
-        {
+        switch ($restrictions['type']) {
             case 'one':
                 // Let's check if subject's IP is the same
                 // as set one for Role.
@@ -388,6 +387,15 @@ class Detector
      */
     private function concernTimeRestriction(array $restrictions): bool
     {
+        $now = now();
+        $rule = $restrictions['rule'];
 
+        switch ($restrictions['type']) {
+            case 'day':
+                return (in_array($now->dayOfWeekIso, $rule)) ? true : false;
+
+            case 'hour':
+                return ($now->hour >= $rule[0] && $now->hour <= $rule[1]) ? true : false;
+        }
     }
 }

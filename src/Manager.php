@@ -123,7 +123,21 @@ class Manager
      */
     public function considerRestriction(Authorizable $auth, string $scope): array
     {
-        retrun [];
+        $restrictions = [];
+        $level        = 0;
+
+        $auth->load('roles.permissions');
+
+        foreach ($auth->roles as $r) {
+            // Let's check if there's a given scope in Parmitable's
+            // ones and consider Role's level.
+            //
+            if ($this->hasPermission($r, $scope)) {
+                ($level < $r->level) ?: $restrictions = $r->restrictions;
+            }
+        }
+
+        return $restrictions;
     }
 
     /**
