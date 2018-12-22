@@ -2,5 +2,7 @@
     "authorizable": "required|string",
     "scopes": "required|array",
     "mapping": "required|array",
-    "mapping_default": "nullable|string"
+    "mapping_default": "nullable|string",
+    "allowed_value": "required",
+    "denied_value": "required"
 }

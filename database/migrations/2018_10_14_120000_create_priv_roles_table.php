@@ -19,6 +19,7 @@ class CreatePrivRolesTable extends Migration
             $table->unsignedTinyInteger('level')->default(0); // Visitor,Employee,Manager,Director
             $table->unsignedInteger('parent_id')->nullable();
             $table->text('childs')->nullable();
+            $table->text('restrictions')->nullable();
             $table->timestamps();
 
             $table->foreign('parent_id')->references('id')->on('priv_roles')->onDelete('SET NULL');

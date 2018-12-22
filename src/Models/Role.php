@@ -25,8 +25,9 @@ class Role extends Model implements Contract
      * @var array
      */
     protected $casts = [
-        'childs' => 'array',
-        'level'  => 'integer',
+        'childs'       => 'array',
+        'level'        => 'integer',
+        'restrictions' => 'array'
     ];
 
     /**
@@ -48,7 +49,7 @@ class Role extends Model implements Contract
      *
      * @var array
      */
-    protected $fillable = ['name', 'level', 'parent_id', 'childs'];
+    protected $fillable = ['name', 'level', 'parent_id', 'childs', 'restrictions'];
 
     /**
      * The table associated with the model.

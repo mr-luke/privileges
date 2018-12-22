@@ -113,6 +113,20 @@ class Manager
     }
 
     /**
+     * Return restrictions based on roles.
+     *
+     * @param  \Mrluke\Privileges\Contracts\Authorizable $auth
+     * @param  string                                    $scope
+     * @return int
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function considerRestriction(Authorizable $auth, string $scope): array
+    {
+        retrun [];
+    }
+
+    /**
      * Detect which scope should be applied for given model.
      *
      * @param  string $model
