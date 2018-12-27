@@ -24,7 +24,7 @@ To install through composer, simply put the following in your composer.json file
 ```json
 {
     "require": {
-        "mr-luke/privileges": "~1.0beta-1"
+        "mr-luke/privileges": "~1.0.0-beta.1"
     }
 }
 ```
