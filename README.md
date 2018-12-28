@@ -1,7 +1,10 @@
 Privileges Manager - Laravel multi-roles manager Package.
 ==============
 
-[![License](https://poser.pugx.org/mr-luke/settings-manager/license)](https://packagist.org/packages/mr-luke/settings-manager)
+[![Latest Stable Version](https://poser.pugx.org/mr-luke/privileges/v/stable)](https://packagist.org/packages/mr-luke/privileges)
+[![License](https://poser.pugx.org/mr-luke/privileges/license)](https://packagist.org/packages/mr-luke/privileges)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/mr-luke/privileges/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/mr-luke/privileges/?branch=master)
+[![Build Status](https://scrutinizer-ci.com/g/mr-luke/privileges/badges/build.png?b=master)](https://scrutinizer-ci.com/g/mr-luke/privileges/build-status/master)
 
 This package provides privileges manager that supports multi-roles, permissions and restrictions.
 
