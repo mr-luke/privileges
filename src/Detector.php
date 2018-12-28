@@ -349,6 +349,22 @@ class Detector
     }
 
     /**
+     * Compare IPs from list to given one.
+     *
+     * @param  array $rules
+     * @param  float $ip
+     * @return bool
+     */
+    private function compareIPs(array $rules, float $ip): bool
+    {
+        foreach ($rules as $ip) {
+            $result = ($ip == ip2long($ip)) ? true : false;
+        }
+
+        return $result ?? true;
+    }
+
+    /**
      * Check if given IP restrictions allows Authorizable to perform action.
      *
      * @param  array $restrictions
@@ -364,9 +380,7 @@ class Detector
             case 'one':
                 // Let's check if subject's IP is the same
                 // as set one for Role.
-                foreach ($rule as $ip) {
-                    $result = ($ip == ip2long($ip)) ? true : false;
-                }
+                $result = $this->compareIPs($rule, $ip);
                 break;
 
             case 'range':
