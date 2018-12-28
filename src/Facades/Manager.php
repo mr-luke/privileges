@@ -5,22 +5,18 @@ namespace Mrluke\Privileges\Facades;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method void assignRole(Authorizable $auth, $role)
- * @method int considerPermission(Authorizable $auth, string $scope)
- * @method array considerRestriction(Authorizable $auth)
- * @method mixed detectScope(string $model)
- * @method string getAuthorizableModel()
- * @method array getAuthorizableMigration()
- * @method mixed getPermission(Permitable $subject, string $scope)
- * @method void grantPermission(Permitable $subject, string $scope, int $level)
- * @method bool hasPermission(Permitable $subject, string $scope)
- * @method bool hasRole(Permitable $subject, $role)
- * @method void regainPermission(Permitable $subject, string $scope)
- * @method void removeRole(Authorizable $auth, $role)
- *
- * @property mixed $allowed_value
- * @property string $authKeyName
- * @property mixed $denied_value
+ * @method static void assignRole(Authorizable $auth, $role)
+ * @method static int considerPermission(Authorizable $auth, string $scope)
+ * @method static array considerRestriction(Authorizable $auth)
+ * @method static mixed detectScope(string $model)
+ * @method static string getAuthorizableModel()
+ * @method static array getAuthorizableMigration()
+ * @method static mixed getPermission(Permitable $subject, string $scope)
+ * @method static void grantPermission(Permitable $subject, string $scope, int $level)
+ * @method static bool hasPermission(Permitable $subject, string $scope)
+ * @method static bool hasRole(Permitable $subject, $role)
+ * @method static void regainPermission(Permitable $subject, string $scope)
+ * @method static void removeRole(Authorizable $auth, $role)
  */
 class Manager extends Facade
 {

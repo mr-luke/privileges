@@ -21,6 +21,10 @@ use Mrluke\Privileges\Contracts\Role;
  * @package   mr-luke/privileges
  * @license   MIT
  * @version   1.0.0
+ *
+ * @property  mixed $allowed_value
+ * @property  string $authKeyName
+ * @property  mixed $denied_value
  */
 class Manager
 {

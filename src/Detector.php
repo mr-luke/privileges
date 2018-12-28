@@ -397,5 +397,7 @@ class Detector
             case 'hour':
                 return ($now->hour >= $rule[0] && $now->hour <= $rule[1]) ? true : false;
         }
+
+        return true;
     }
 }

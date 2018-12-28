@@ -1,5 +1,6 @@
 filter:
     excluded_paths:
         - config/*
+        - tests/*
     dependency_paths:
         - "vendor/"

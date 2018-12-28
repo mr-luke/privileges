@@ -5,14 +5,14 @@ namespace Mrluke\Privileges\Facades;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method mixed has(Model $model, string $relation = null)
- * @method mixed hasOrLevel(Model $model, int $min, string $relation = null)
- * @method mixed level(int $min)
- * @method mixed owner(Model $model, string $foreign = null)
- * @method mixed ownerOrLevel(Model $model, int $min, string $foreign = null)
- * @method self scope(string $scope)
- * @method mixed share(Model $model, string $modelRelation, string $relation)
- * @method self subject(Authorizable $auth)
+ * @method static mixed has(Model $model, string $relation = null)
+ * @method static mixed hasOrLevel(Model $model, int $min, string $relation = null)
+ * @method static mixed level(int $min)
+ * @method static mixed owner(Model $model, string $foreign = null)
+ * @method static mixed ownerOrLevel(Model $model, int $min, string $foreign = null)
+ * @method static self scope(string $scope)
+ * @method static mixed share(Model $model, string $modelRelation, string $relation)
+ * @method static self subject(Authorizable $auth)
  */
 class Detector extends Facade
 {
