@@ -20,6 +20,8 @@ This package provides privileges manager that supports multi-roles, permissions 
 Privileges Manager has been developed using `Laravel 5.5`
 It's recommended to test it out before using with previous versions. PHP >= 7.1.3 is required.
 
+*Note! This package is still in **Beta** release.*
+
 ## Installation
 
 To install through composer, simply put the following in your composer.json file and run `composer update`
@@ -27,7 +29,7 @@ To install through composer, simply put the following in your composer.json file
 ```json
 {
     "require": {
-        "mr-luke/privileges": "~1.0.0-beta.1"
+        "mr-luke/privileges": "~1.0.0"
     }
 }
 ```
