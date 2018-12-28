@@ -56,6 +56,13 @@ class Permission extends Model implements Contract
     protected $table = 'priv_permissions';
 
     /**
+     * Indicates if the model should be timestamped.
+     *
+     * @var bool
+     */
+    public $timestamps = false;
+
+    /**
      * Return related model.
      */
     public function grantable()

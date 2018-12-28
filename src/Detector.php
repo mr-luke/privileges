@@ -79,11 +79,11 @@ class Detector
     /**
      * Determine if give Subject has resource.
      *
-     * @param  Illuminate\Database\Eloquent\Model  $model
+     * @param  \Illuminate\Database\Eloquent\Model  $model
      * @param  string  $relation
-     * @return bool
+     * @return mixed
      */
-    public function has(Model $model, string $relation = null): bool
+    public function has(Model $model, string $relation = null)
     {
         $this->hasSubjectSet();
 
@@ -97,12 +97,12 @@ class Detector
     /**
      * Determines if Subject has resource or has enough privilege.
      *
-     * @param  Illuminate\Database\Eloquent\Model  $model
+     * @param  \Illuminate\Database\Eloquent\Model  $model
      * @param  int $min
      * @param  string $relation
-     * @return bool
+     * @return mixed
      */
-    public function hasOrLevel(Model $model, int $min, string $relation = null): bool
+    public function hasOrLevel(Model $model, int $min, string $relation = null)
     {
         $this->hasSubjectAndScopeSet();
 
@@ -120,9 +120,9 @@ class Detector
      *
      * @param  int     $min
      * @param  boolean $this->denied
-     * @return bool
+     * @return mixed
      */
-    public function level(int $min): bool
+    public function level(int $min)
     {
         $this->hasSubjectAndScopeSet();
 
@@ -136,12 +136,12 @@ class Detector
     /**
      * Determines if Subject is owner of model.
      *
-     * @param  Illuminate\Database\Eloquent\Model  $model
+     * @param  \Illuminate\Database\Eloquent\Model  $model
      * @param  boolean $this->denied
      * @param  string $foreign
-     * @return bool
+     * @return mixed
      */
-    public function owner(Model $model, string $foreign = null): bool
+    public function owner(Model $model, string $foreign = null)
     {
         $this->hasSubjectSet();
 
@@ -155,13 +155,13 @@ class Detector
     /**
      * Determines if Subject is owner of model or has enough privilege.
      *
-     * @param  Illuminate\Database\Eloquent\Model  $model
+     * @param  \Illuminate\Database\Eloquent\Model  $model
      * @param  int $min
      * @param  boolean $this->denied
      * @param  string $foreign
-     * @return bool
+     * @return mixed
      */
-    public function ownerOrLevel(Model $model, int $min, string $foreign = null): bool
+    public function ownerOrLevel(Model $model, int $min, string $foreign = null)
     {
         $this->hasSubjectAndScopeSet();
 
@@ -190,13 +190,13 @@ class Detector
     /**
      * Determines if Subject and model shares instance.
      *
-     * @param  Illuminate\Database\Eloquent\Model  $model
+     * @param  \Illuminate\Database\Eloquent\Model  $model
      * @param  string $modelRelation
      * @param  string $relation
      * @param  boolean $this->denied
-     * @return bool
+     * @return mixed
      */
-    public function share(Model $model, string $modelRelation, string $relation): bool
+    public function share(Model $model, string $modelRelation, string $relation)
     {
         $this->hasSubjectSet();
 
@@ -231,7 +231,7 @@ class Detector
         $result = true;
         // Let's get restritions and check
         // if its present.
-        if ($restrictions = $this->manager->considerRestriction($this->subject, $this->scope)) {
+        if ($restrictions = $this->manager->considerRestriction($this->subject)) {
             // We need to check if subjects's IP address is allowed
             // by it's Role to perform the action.
             if (isset($restrictions['ip']))
@@ -265,7 +265,7 @@ class Detector
     /**
      * Determine if give Subject has resource.
      *
-     * @param  Illuminate\Database\Eloquent\Model  $model
+     * @param  \Illuminate\Database\Eloquent\Model  $model
      * @param  string|null  $relation
      * @return bool
      */
@@ -284,7 +284,7 @@ class Detector
     /**
      * Check if Subject is owner of model.
      *
-     * @param  Illuminate\Database\Eloquent\Model  $model
+     * @param  \Illuminate\Database\Eloquent\Model  $model
      * @param  string|null $foreign
      * @return bool
      */
@@ -304,7 +304,7 @@ class Detector
     /**
      * Chech if Subject and model shares instance.
      *
-     * @param  Illuminate\Database\Eloquent\Model  $model
+     * @param  \Illuminate\Database\Eloquent\Model  $model
      * @param  string $modelRelation
      * @param  string $relation
      * @return bool
@@ -320,7 +320,7 @@ class Detector
      * Check if detector is correctly set.
      *
      * @return void
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     protected function hasSubjectSet(): void
     {
@@ -335,7 +335,7 @@ class Detector
      * Check if detector is correctly set.
      *
      * @return void
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     protected function hasSubjectAndScopeSet(): void
     {

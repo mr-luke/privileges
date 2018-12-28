@@ -72,11 +72,11 @@ class Manager
             $auth->roles()->syncWithoutDetaching([$role]);
         } elseif (is_array($role)) {
             $auth->roles()->syncWithoutDetaching($role);
+        } else {
+            throw new InvalidArgumentException(
+                sprintf('[role] parameter must be type of integer or instance of \Mrluke\Privileges\Contracts\Role. %s type given.', gettype($role))
+            );
         }
-
-        throw new InvalidArgumentException(
-            sprintf('[role] parameter must be type of integer or instance of \Mrluke\Privileges\Contracts\Role. %s type given.', gettype($role))
-        );
     }
 
     /**
@@ -116,12 +116,11 @@ class Manager
      * Return restrictions based on roles.
      *
      * @param  \Mrluke\Privileges\Contracts\Authorizable $auth
-     * @param  string                                    $scope
      * @return int
      *
      * @throws \InvalidArgumentException
      */
-    public function considerRestriction(Authorizable $auth, string $scope): array
+    public function considerRestriction(Authorizable $auth): array
     {
         $restrictions = [];
         $level        = 0;
@@ -129,12 +128,8 @@ class Manager
         $auth->load('roles.permissions');
 
         foreach ($auth->roles as $r) {
-            // Let's check if there's a given scope in Parmitable's
-            // ones and consider Role's level.
-            //
-            if ($this->hasPermission($r, $scope)) {
-                ($level < $r->level) ?: $restrictions = $r->restrictions;
-            }
+            // Let's check if there're restrictions for a roles.
+            ($level < $r->level) ?: $restrictions = $r->restrictions;
         }
 
         return $restrictions;
@@ -149,7 +144,7 @@ class Manager
     public function detectScope(string $model)
     {
         return $this->config->get(
-            'mapping',
+            'mapping.'.$model,
             $this->config->get('mapping_default')
         );
     }
@@ -172,7 +167,8 @@ class Manager
     public function getAuthorizableMigration(): array
     {
         if (is_null($this->authKeyName)) {
-            $instance = new $this->config->get('authorizable');
+            $authorizableClass = $this->config->get('authorizable');
+            $instance = new $authorizableClass;
 
             if (!$instance instanceof Model) {
                 throw new ConfigurationException(
@@ -197,7 +193,7 @@ class Manager
      *
      * @param  \Mrluke\Privileges\Contracts\Permitable $subject
      * @param  string                                  $scope
-     * @return \Mrluke\Privileges\ContractsPermission|null
+     * @return \Mrluke\Privileges\Contracts\Permission|null
      *
      * @throws \InvalidArgumentException
      */
@@ -231,7 +227,7 @@ class Manager
     }
 
     /**
-     * Return if there's a given scope Permission for a Permitable.
+     * Determine if there's a given scope Permission for a Permitable.
      *
      * @param  \Mrluke\Privileges\Contracts\Permitable $subject
      * @param  string                                  $scope
@@ -244,6 +240,18 @@ class Manager
         $this->checkScope($scope);
 
         return $subject->permissions->where('scope', $scope)->exists();
+    }
+
+    /**
+     * Determine if Permitable has given Role assigned.
+     *
+     * @param  \Mrluke\Privileges\Contracts\Permitable $subject
+     * @param  mixed                                   $role
+     * @return bool
+     */
+    public function hasRole(Permitable $subject, $role): bool
+    {
+        return $subject->roles->where('id', $role->id)->exists();
     }
 
     /**
@@ -275,11 +283,11 @@ class Manager
             $auth->roles()->detach($role->id);
         } elseif (is_integer($role)) {
             $auth->roles()->detach($role);
+        } else {
+            throw new InvalidArgumentException(
+                sprintf('[role] parameter must be type of integer or instance of \Mrluke\Privileges\Contracts\Role. %s type given.', gettype($role))
+            );
         }
-
-        throw new InvalidArgumentException(
-            sprintf('[role] parameter must be type of integer or instance of \Mrluke\Privileges\Contracts\Role. %s type given.', gettype($role))
-        );
     }
 
     /**

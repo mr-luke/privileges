@@ -22,7 +22,7 @@ class CreatePrivUserRoleTable extends Migration
             // package provides support for tree types
             // of primaryKey: integer, string & uuid.
             //
-            if ($config['type'] == 'integer') {
+            if ($config['type'] == 'int') {
                 $table->unsignedInteger('auth_id');
 
             } elseif ($config['type'] == 'string') {
@@ -52,6 +52,6 @@ class CreatePrivUserRoleTable extends Migration
     {
         Schema::disableForeignKeyConstraints();
 
-        Schema::dropIfExists('priv_user_role');
+        Schema::dropIfExists('priv_auth_role');
     }
 }
