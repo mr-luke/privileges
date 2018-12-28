@@ -352,13 +352,13 @@ class Detector
      * Compare IPs from list to given one.
      *
      * @param  array $rules
-     * @param  float $ip
+     * @param  float $long
      * @return bool
      */
-    private function compareIPs(array $rules, float $ip): bool
+    private function compareIPs(array $rules, float $long): bool
     {
         foreach ($rules as $ip) {
-            $result = ($ip == ip2long($ip)) ? true : false;
+            $result = ($long == ip2long($ip)) ? true : false;
         }
 
         return $result ?? true;
