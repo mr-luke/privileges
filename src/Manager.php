@@ -3,6 +3,7 @@
 namespace Mrluke\Privileges;
 
 use InvalidArgumentException;
+use Illuminate\Database\Eloquent\Model;
 use Mrluke\Configuration\Contracts\ArrayHost as Host;
 use Mrluke\Configuration\Exceptions\ConfigurationException;
 use Mrluke\Privileges\Contracts\Authorizable;
@@ -176,7 +177,7 @@ class Manager
 
             if (!$instance instanceof Model) {
                 throw new ConfigurationException(
-                    sprintf('An instance of [authorizable] should be \Illuminate\Databe\Eloquent\Model. %s given.', get_class($instance))
+                    sprintf('An instance of [authorizable] should be \Illuminate\Database\Eloquent\Model. %s given.', get_class($instance))
                 );
             }
 
