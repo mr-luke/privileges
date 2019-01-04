@@ -303,6 +303,10 @@ class Manager
      */
     public function __get(string $name)
     {
+        if (is_null($this->authKeyName)) {
+            $this->getAuthorizableMigration();
+        }
+
         if (in_array($name, ['authKeyName', 'authKeyType', 'authTable'])) {
             return $this->{$name};
         }
