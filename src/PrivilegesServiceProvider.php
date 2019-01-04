@@ -50,7 +50,7 @@ class PrivilegesServiceProvider extends ServiceProvider
         $this->app->singleton('mrluke-privileges-manager', function ($app) {
 
             $schema = \Mrluke\Configuration\Schema::createFromFile(
-                __DIR__.'/../configuration/schema.json',
+                __DIR__.'/../config/schema.json',
                 true
             );
 
