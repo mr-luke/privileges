@@ -137,7 +137,7 @@ class Manager
             ($level < $r->level) ?: $restrictions = $r->restrictions;
         }
 
-        return $restrictions;
+        return is_array($restrictions) ? $restrictions : [];
     }
 
     /**
