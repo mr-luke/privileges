@@ -103,7 +103,9 @@ class Manager
         }
 
         $general = 0;
-        $auth->load('roles.permissions');
+        if (! $auth->relationLoaded('roles')) {
+            $auth->load('roles.permissions');
+        }
 
         foreach ($auth->roles as $r) {
             // Let's check if there's a given scope defined
@@ -130,7 +132,9 @@ class Manager
         $restrictions = [];
         $level        = 0;
 
-        $auth->load('roles.permissions');
+        if (! $auth->relationLoaded('roles')) {
+            $auth->load('roles.permissions');
+        }
 
         foreach ($auth->roles as $r) {
             // Let's check if there're restrictions for a roles.
