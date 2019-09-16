@@ -346,7 +346,7 @@ class Manager
     {
         $this->checkScope($scope);
 
-        if ($level >= 0 && $level < 5) {
+        if ($level < 0 && $level > 4) {
             throw new InvalidArgumentException('Given [level] must be in range of 0-4.');
         }
     }
