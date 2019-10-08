@@ -123,7 +123,7 @@ class Manager
      * Return restrictions based on roles.
      *
      * @param  \Mrluke\Privileges\Contracts\Authorizable $auth
-     * @return int
+     * @return array
      *
      * @throws \InvalidArgumentException
      */
