@@ -56,7 +56,7 @@ class Detector
     /**
      * Scope name.
      *
-     * @var string
+     * @var string|array
      */
     protected $scope;
 
@@ -177,10 +177,10 @@ class Detector
     /**
      * Set scope that is checking.
      *
-     * @param  string $scope
+     * @param  string|array $scope
      * @return self
      */
-    public function scope(string $scope): self
+    public function scope($scope): self
     {
         $this->scope = $scope;
 

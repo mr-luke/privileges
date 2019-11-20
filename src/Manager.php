@@ -2,12 +2,11 @@
 
 namespace Mrluke\Privileges;
 
-use InvalidArgumentException;
 use Illuminate\Database\Eloquent\Model;
+use InvalidArgumentException;
 use Mrluke\Configuration\Contracts\ArrayHost as Host;
 use Mrluke\Configuration\Exceptions\ConfigurationException;
 use Mrluke\Privileges\Contracts\Authorizable;
-use Mrluke\Privileges\Contracts\Permission;
 use Mrluke\Privileges\Contracts\Permitable;
 use Mrluke\Privileges\Contracts\Role;
 
@@ -23,9 +22,9 @@ use Mrluke\Privileges\Contracts\Role;
  * @license   MIT
  * @version   1.0.0
  *
- * @property  mixed $allowed_value
+ * @property  mixed  $allowed_value
  * @property  string $authKeyName
- * @property  mixed $denied_value
+ * @property  mixed  $denied_value
  */
 class Manager
 {
@@ -65,8 +64,9 @@ class Manager
     /**
      * Assign Authorizable to given role.
      *
-     * @param  \Mrluke\Privileges\Contracts\Authorizable $auth
-     * @param  mixed                                     $role
+     * @param \Mrluke\Privileges\Contracts\Authorizable $auth
+     * @param mixed                                     $role
+     *
      * @return void
      */
     public function assignRole(Authorizable $auth, $role): void
@@ -87,32 +87,41 @@ class Manager
     /**
      * Return permission level based on personal's & role's permission.
      *
-     * @param  \Mrluke\Privileges\Contracts\Authorizable $auth
-     * @param  string                                    $scope
+     * @param \Mrluke\Privileges\Contracts\Authorizable $auth
+     * @param string|array                              $scopes
+     *
      * @return int
      *
      * @throws \InvalidArgumentException
      */
-    public function considerPermission(Authorizable $auth, string $scope): int
+    public function considerPermission(Authorizable $auth, $scopes): int
     {
-        if ($personal = $this->getPermission($auth, $scope)) {
-            // Personal permissions has priority
-            // over role's ones.
-            //
-            return $personal->level;
+        if (!is_array($scopes)) {
+            $scopes = [$scopes];
+        }
+
+        foreach ($scopes as $scope) {
+            if ($personal = $this->getPermission($auth, $scope)) {
+                // Personal permissions has priority
+                // over role's ones.
+                //
+                return $personal->level;
+            }
         }
 
         $general = 0;
-        if (! $auth->relationLoaded('roles')) {
+        if (!$auth->relationLoaded('roles')) {
             $auth->load('roles.permissions');
         }
 
-        foreach ($auth->roles as $r) {
-            // Let's check if there's a given scope defined
-            // as a permission in any of Authorizable roles.
-            //
-            if ($p = $this->getPermission($r, $scope)) {
-                ($p->level < $general) ?: $general = $p->level;
+        foreach ($scopes as $scope) {
+            foreach ($auth->roles as $r) {
+                // Let's check if there's a given scope defined
+                // as a permission in any of Authorizable roles.
+                //
+                if ($p = $this->getPermission($r, $scope)) {
+                    ($p->level < $general) ?: $general = $p->level;
+                }
             }
         }
 
@@ -122,7 +131,8 @@ class Manager
     /**
      * Return restrictions based on roles.
      *
-     * @param  \Mrluke\Privileges\Contracts\Authorizable $auth
+     * @param \Mrluke\Privileges\Contracts\Authorizable $auth
+     *
      * @return array
      *
      * @throws \InvalidArgumentException
@@ -132,7 +142,7 @@ class Manager
         $restrictions = [];
         $level        = 0;
 
-        if (! $auth->relationLoaded('roles')) {
+        if (!$auth->relationLoaded('roles')) {
             $auth->load('roles.permissions');
         }
 
@@ -147,13 +157,14 @@ class Manager
     /**
      * Detect which scope should be applied for given model.
      *
-     * @param  string $model
+     * @param string $model
+     *
      * @return string|null
      */
     public function detectScope(string $model)
     {
         return $this->config->get(
-            'mapping.'.$model,
+            'mapping.' . $model,
             $this->config->get('mapping_default')
         );
     }
@@ -177,7 +188,7 @@ class Manager
     {
         if (is_null($this->authKeyName)) {
             $authorizableClass = $this->config->get('authorizable');
-            $instance = new $authorizableClass;
+            $instance          = new $authorizableClass;
 
             if (!$instance instanceof Model) {
                 throw new ConfigurationException(
@@ -193,15 +204,16 @@ class Manager
         return [
             'key'   => $this->authKeyName,
             'type'  => $this->authKeyType,
-            'table' => $this->authTable
+            'table' => $this->authTable,
         ];
     }
 
     /**
      * Return Permission for given scope.
      *
-     * @param  \Mrluke\Privileges\Contracts\Permitable $subject
-     * @param  string                                  $scope
+     * @param \Mrluke\Privileges\Contracts\Permitable $subject
+     * @param string                                  $scope
+     *
      * @return \Mrluke\Privileges\Contracts\Permission|null
      *
      * @throws \InvalidArgumentException
@@ -216,9 +228,10 @@ class Manager
     /**
      * Grant or update premission for a Permitable.
      *
-     * @param  \Mrluke\Privileges\Contracts\Permitable $subject
-     * @param  string                                  $scope
-     * @param  int                                     $level
+     * @param \Mrluke\Privileges\Contracts\Permitable $subject
+     * @param string                                  $scope
+     * @param int                                     $level
+     *
      * @return void
      *
      * @throws \InvalidArgumentException
@@ -231,15 +244,16 @@ class Manager
 
         $permission ? $permission->update(['level' => $level]) : $subject->permissions()->create([
             'scope' => $scope,
-            'level' => $level
+            'level' => $level,
         ]);
     }
 
     /**
      * Determine if there's a given scope Permission for a Permitable.
      *
-     * @param  \Mrluke\Privileges\Contracts\Permitable $subject
-     * @param  string                                  $scope
+     * @param \Mrluke\Privileges\Contracts\Permitable $subject
+     * @param string                                  $scope
+     *
      * @return bool
      *
      * @throws \InvalidArgumentException
@@ -254,8 +268,9 @@ class Manager
     /**
      * Determine if Permitable has given Role assigned.
      *
-     * @param  \Mrluke\Privileges\Contracts\Permitable $subject
-     * @param  mixed                                   $role
+     * @param \Mrluke\Privileges\Contracts\Permitable $subject
+     * @param mixed                                   $role
+     *
      * @return bool
      */
     public function hasRole(Permitable $subject, $role): bool
@@ -266,8 +281,9 @@ class Manager
     /**
      * Regain permission for a Permitable.
      *
-     * @param  \Mrluke\Privileges\Contracts\Permitable $subject
-     * @param  string                                  $scope
+     * @param \Mrluke\Privileges\Contracts\Permitable $subject
+     * @param string                                  $scope
+     *
      * @return void
      *
      * @throws \InvalidArgumentException
@@ -282,8 +298,9 @@ class Manager
     /**
      * Remove Authorizable's role.
      *
-     * @param  \Mrluke\Privileges\Contracts\Authorizable $auth
-     * @param  mixed                                     $role
+     * @param \Mrluke\Privileges\Contracts\Authorizable $auth
+     * @param mixed                                     $role
+     *
      * @return void
      */
     public function removeRole(Authorizable $auth, $role): void
@@ -302,7 +319,8 @@ class Manager
     /**
      * Return class attributes or setting.
      *
-     * @param  string $name
+     * @param string $name
+     *
      * @return mixed
      */
     public function __get(string $name)
@@ -321,14 +339,17 @@ class Manager
     /**
      * Check if the scope value.
      *
-     * @param  string $scope
+     * @param string $scope
+     *
      * @return void
      *
      * @throws \InvalidArgumentException
      */
     private function checkScope(string $scope): void
     {
-        if (!in_array($scope, $this->config->get('scopes'))) {
+        $scope = explode(':', $scope);
+
+        if (!in_array($scope[0], $this->config->get('scopes'))) {
             throw new InvalidArgumentException('Given [scope] is not allowed.');
         }
     }
@@ -336,8 +357,9 @@ class Manager
     /**
      * Check if the scope & level values.
      *
-     * @param  string $scope
-     * @param  int    $level
+     * @param string $scope
+     * @param int    $level
+     *
      * @return void
      *
      * @throws \InvalidArgumentException
