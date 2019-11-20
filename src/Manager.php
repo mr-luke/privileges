@@ -100,8 +100,14 @@ class Manager
             $scopes = [$scopes];
         }
 
+        // Validate scopes ahead of all conditions
+        //
         foreach ($scopes as $scope) {
-            if ($personal = $this->getPermission($auth, $scope)) {
+            $this->checkScope($scope);
+        }
+
+        foreach ($scopes as $scope) {
+            if ($personal = $this->getPermission($auth, $scope, false)) {
                 // Personal permissions has priority
                 // over role's ones.
                 //
@@ -119,7 +125,7 @@ class Manager
                 // Let's check if there's a given scope defined
                 // as a permission in any of Authorizable roles.
                 //
-                if ($p = $this->getPermission($r, $scope)) {
+                if ($p = $this->getPermission($r, $scope, false)) {
                     ($p->level < $general) ?: $general = $p->level;
                 }
             }
@@ -213,14 +219,16 @@ class Manager
      *
      * @param \Mrluke\Privileges\Contracts\Permitable $subject
      * @param string                                  $scope
+     * @param bool                                    $checkScope
      *
      * @return \Mrluke\Privileges\Contracts\Permission|null
      *
-     * @throws \InvalidArgumentException
      */
-    public function getPermission(Permitable $subject, string $scope)
+    public function getPermission(Permitable $subject, string $scope, bool $checkScope = true)
     {
-        $this->checkScope($scope);
+        if($checkScope) {
+            $this->checkScope($scope);
+        }
 
         return $subject->permissions->where('scope', $scope)->first();
     }
