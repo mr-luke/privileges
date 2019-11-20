@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Facade;
 
 /**
  * @method static void assignRole(Authorizable $auth, $role)
- * @method static int considerPermission(Authorizable $auth, string $scope)
+ * @method static int considerPermission(Authorizable $auth, $scope)
  * @method static array considerRestriction(Authorizable $auth)
  * @method static mixed detectScope(string $model)
  * @method static string getAuthorizableModel()
