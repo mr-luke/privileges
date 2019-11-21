@@ -51,12 +51,12 @@ trait Authorizable
     /**
      * Return permission level based on personal's & role's permission.
      *
-     * @param  string $scope
+     * @param  string|array $scopes
      * @return int
      */
-    public function considerPermission(string $scope): int
+    public function considerPermission($scopes): int
     {
-        return Manager::considerPermission($this, $scope);
+        return Manager::considerPermission($this, $scopes);
     }
 
     /**

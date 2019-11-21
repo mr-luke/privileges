@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static mixed level(int $min)
  * @method static mixed owner(Model $model, string $foreign = null)
  * @method static mixed ownerOrLevel(Model $model, int $min, string $foreign = null)
- * @method static self scope(string $scope)
+ * @method static self scope($scope)
  * @method static mixed share(Model $model, string $modelRelation, string $relation)
  * @method static self subject(Authorizable $auth)
  */
