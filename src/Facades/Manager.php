@@ -17,7 +17,6 @@ use Illuminate\Support\Facades\Facade;
  * @method static bool hasRole(Permitable $subject, $role)
  * @method static void regainPermission(Permitable $subject, string $scope)
  * @method static void removeRole(Authorizable $auth, $role)
- * @method static array getScopeRestrictions($subject, string $scope)
  */
 class Manager extends Facade
 {

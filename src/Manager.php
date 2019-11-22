@@ -242,23 +242,6 @@ class Manager
     }
 
     /**
-     * @param        $subject
-     * @param string $scope
-     *
-     * @return array
-     */
-    public static function getScopeRestrictions($subject, string $scope): array
-    {
-        $scopes = $subject->roles->flatMap(function ($role) use ($scope) {
-            return preg_grep("/^${scope}:/", array_column($role->permissions->toArray(), 'scope'));
-        })->toArray();
-
-        return array_map(function ($scope) {
-            return explode(':', $scope)[1];
-        }, $scopes);
-    }
-
-    /**
      * Grant or update premission for a Permitable.
      *
      * @param \Mrluke\Privileges\Contracts\Permitable $subject
