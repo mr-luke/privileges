@@ -226,8 +226,16 @@ class Manager
      */
     public function getPermission(Permitable $subject, string $scope, bool $checkScope = true)
     {
-        if($checkScope) {
+        if ($checkScope) {
             $this->checkScope($scope);
+        }
+
+        if (':*' === substr($scope, -2)) {
+            $scope = substr($scope, 0, -2);
+
+            return $subject->permissions->sortbyDesc('level')->first(function ($perm) use ($scope) {
+                return preg_match("/^(${scope}$|${scope}:)/", $perm['scope']);
+            });
         }
 
         return $subject->permissions->where('scope', $scope)->first();
