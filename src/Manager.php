@@ -226,11 +226,36 @@ class Manager
      */
     public function getPermission(Permitable $subject, string $scope, bool $checkScope = true)
     {
-        if($checkScope) {
+        if ($checkScope) {
             $this->checkScope($scope);
         }
 
+        if (':*' === substr($scope, -2)) {
+            $scope = substr($scope, 0, -2);
+
+            return $subject->permissions->sortbyDesc('level')->first(function ($perm) use ($scope) {
+                return preg_match("/^(${scope}$|${scope}:)/", $perm['scope']);
+            });
+        }
+
         return $subject->permissions->where('scope', $scope)->first();
+    }
+
+    /**
+     * @param        $subject
+     * @param string $scope
+     *
+     * @return array
+     */
+    public static function getScopeRestrictions($subject, string $scope): array
+    {
+        $scopes = $subject->roles->flatMap(function ($role) use ($scope) {
+            return preg_grep("/^${scope}:/", array_column($role->permissions->toArray(), 'scope'));
+        })->toArray();
+
+        return array_map(function ($scope) {
+            return explode(':', $scope)[1];
+        }, $scopes);
     }
 
     /**
