@@ -31,8 +31,8 @@ class PermissionResolver
             return preg_grep("/^${scope}:/", array_column($permissions->toArray(), 'scope'));
         })->toArray();
 
-        return array_map(function ($scope) {
-            return explode(':', $scope)[1];
+        return array_map(function ($val) use ($scope) {
+            return str_replace($scope . ':', '', $val);
         }, $scopes);
     }
 }
