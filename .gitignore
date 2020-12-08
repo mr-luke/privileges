@@ -1,6 +1,12 @@
-vendor/
-node_modules/
+.idea/
+/tests-coverage
+/vendor
 .DS_Store
-composer.lock
-npm-debug.log
+.env*
+.phpunit.result.cache
+develop
+docker-compose*
+result*.svg
+result.xml
+unit-report.xml*
 .idea/

@@ -2,7 +2,9 @@
 
 namespace Mrluke\Privileges\Tests;
 
+use DataSeeder;
 use Mrluke\Configuration\Host;
+use Mrluke\Privileges\PrivilegesServiceProvider;
 use Orchestra\Testbench\TestCase as BaseCase;
 
 /**
@@ -17,10 +19,10 @@ class TestCase extends BaseCase
     /**
      * DB configuration.
      */
-    const DB_HOST = 'localhost';
-    const DB_NAME = 'packages';
-    const DB_USERNAME = 'root';
-    const DB_PASSWORD = '';
+    const DB_HOST = 'mysql';
+    const DB_NAME = 'dev';
+    const DB_USERNAME = 'dev';
+    const DB_PASSWORD = 'dev';
     const DB_PREFIX = 'privileges_';
 
     /**
@@ -104,7 +106,7 @@ class TestCase extends BaseCase
     protected function getPackageProviders($app) : array
     {
         return [
-            \Mrluke\Privileges\PrivilegesServiceProvider::class,
+            PrivilegesServiceProvider::class,
         ];
     }
 
@@ -128,7 +130,7 @@ class TestCase extends BaseCase
     private function refreshSeedData() : void
     {
         $this->truncateAllTablesButMigrations(static::DB_NAME);
-        $seeder = new \DataSeeder();
+        $seeder = new DataSeeder();
         $seeder->run();
     }
 
